@@ -520,7 +520,7 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener, Chan
      * @param copy
      */
     protected void sendOwnState(final Map<Point,Color> copy) {
-        if(copy == null)
+        if(copy != null)
             return;
         for(Point point: copy.keySet()) {
             // we don't need the color: it is our draw_color anyway
