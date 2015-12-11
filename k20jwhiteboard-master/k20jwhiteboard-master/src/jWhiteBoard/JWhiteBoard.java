@@ -33,13 +33,15 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener, Chan
     private JFrame                 mainFrame=null;
     private JPanel                 subPanel=null;
     private DrawPanel              drawPanel=null;
-    private JButton                clearButton, leaveButton;
+    private JButton clearButton, leaveButton, colorbrushButton, colorbackgroundButton;
     private final Random           random=new Random(System.currentTimeMillis());
     private final Font             defaultFont=new Font("Helvetica",Font.PLAIN,12);
-    private final Color            drawColor=Color.black;
-    private static final Color     backgroundColor=Color.lightGray;
+    private Color            		drawColor=Color.black;
+    private Color     				backgroundColor=Color.white;
     boolean                        noChannel=false;
     boolean                        jmx;
+    private JComboBox cmb;
+    private JLabel BrSize,BrPx;
     private boolean                useState=false;
     private long                   stateTimeout=5000;
     private boolean                use_unicasts=false;
@@ -239,13 +241,13 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener, Chan
      * Generate Random Color
      * @return
      */
-    private Color selectColor() {
+   /* private Color selectColor() {
         int red=Math.abs(random.nextInt()) % 255;
         int green=Math.abs(random.nextInt()) % 255;
         int blue=Math.abs(random.nextInt()) % 255;
         return new Color(red, blue, blue);
     }
-
+*/
 
     /**
      * Send message to members in members list only.
@@ -272,21 +274,41 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener, Chan
         drawPanel.setBackground(backgroundColor);
         subPanel=new JPanel();
         mainFrame.getContentPane().add("Center", drawPanel);
-        clearButton=new JButton("Clean");
+        colorbrushButton = new JButton("Brush color");
+		colorbrushButton.setFont(defaultFont);
+		colorbrushButton.addActionListener(this);
+        clearButton=new JButton("Clear");
         clearButton.setFont(defaultFont);
         clearButton.addActionListener(this);
         leaveButton=new JButton("Exit");
         leaveButton.setFont(defaultFont);
         leaveButton.addActionListener(this);
+        colorbackgroundButton = new JButton("Background color");
+		colorbackgroundButton.setFont(defaultFont);
+		colorbackgroundButton.addActionListener(this);
+		BrSize = new JLabel("Choose Brush Size");
+		BrPx = new JLabel("Px");
+		String[] sList = { "5", "10", "15","20", "25", "30" };
+		cmb = new JComboBox(sList);
+		subPanel.add("South",BrSize);
+		subPanel.add("South",cmb);
+		subPanel.add("South",BrPx);
+		subPanel.add("South",colorbackgroundButton);
+		subPanel.add("South", colorbrushButton);
         subPanel.add("South", clearButton);
         subPanel.add("South", leaveButton);
         mainFrame.getContentPane().add("South", subPanel);
         mainFrame.setBackground(backgroundColor);
+        BrPx.setForeground(Color.blue);
+		cmb.setForeground(Color.blue);
+		BrSize.setForeground(Color.blue);
         clearButton.setForeground(Color.blue);
         leaveButton.setForeground(Color.blue);
+        colorbrushButton.setForeground(Color.blue);
+		colorbackgroundButton.setForeground(Color.BLUE);
         mainFrame.pack();
         mainFrame.setLocation(15, 25);
-        mainFrame.setBounds(new Rectangle(250, 250));
+        mainFrame.setBounds(new Rectangle(600, 300));
 
         if(!noChannel && useState) {
             channel.connect(groupName, null, stateTimeout);
@@ -453,6 +475,20 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener, Chan
         else if("Leave".equals(command)) {
             stop();
         }
+        else  if ("Background color".equals(command)) {
+			Color cbackground = JColorChooser.showDialog(null, "Choose Background Color",
+					Color.white);
+			Point p = mainFrame.getLocation();
+			mainFrame.dispose();
+			backgroundColor = cbackground;
+			try {
+				go();
+				mainFrame.setLocation(p);
+			}catch(Exception e1){
+				e1.printStackTrace();
+			}
+
+		}
         else
             System.out.println("Unknown action");
     }
@@ -585,7 +621,7 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener, Chan
                     Point point=entry.getKey();
                     Color col=entry.getValue();
                     dos.writeInt(point.x);
-                    dos.writeInt(point.x);
+                    dos.writeInt(point.y);
                     dos.writeInt(col.getRGB());
                 }
                 dos.flush();
@@ -645,7 +681,7 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener, Chan
          * When do a mouse drag, get coordinates ( X and Y) of the mouse, then send Draw command as a message to member of Group
          */
         public void mouseDragged(MouseEvent e) {
-            int                 x=e.getX(), y=e.getX();
+            int                 x=e.getX(), y=e.getY();
             DrawCommand         comm=new DrawCommand(DrawCommand.DRAW, x, y, drawColor.getRGB());
 
             if(noChannel) {
