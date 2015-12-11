@@ -471,6 +471,11 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener, Chan
                 return;
             }
             sendClearPanelMsg();
+               }
+        if("Brush color".equals(command)){
+        	Color colorBrush = Color.black;
+        	colorBrush = JColorChooser.showDialog(null, "Chonse your color", colorBrush);
+        	drawColor = colorBrush;
         }
         else if("Leave".equals(command)) {
             stop();
