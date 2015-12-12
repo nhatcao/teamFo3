@@ -35,7 +35,7 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 	private JFrame mainFrame = null;
 	private JPanel subPanel = null;
 	private DrawPanel drawPanel = null;
-	private JButton clearButton, leaveButton, colorbrushButton,
+	private JButton clearButton, exitButton, colorbrushButton,
 			colorbackgroundButton;
 	private final Random random = new Random(System.currentTimeMillis());
 	private final Font defaultFont = new Font("Helvetica", Font.PLAIN, 12);
@@ -291,9 +291,9 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 		clearButton = new JButton("Clear");
 		clearButton.setFont(defaultFont);
 		clearButton.addActionListener(this);
-		leaveButton = new JButton("Exit");
-		leaveButton.setFont(defaultFont);
-		leaveButton.addActionListener(this);
+		exitButton = new JButton("Exit");
+		exitButton.setFont(defaultFont);
+		exitButton.addActionListener(this);
 		colorbackgroundButton = new JButton("Background color");
 		colorbackgroundButton.setFont(defaultFont);
 		colorbackgroundButton.addActionListener(this);
@@ -307,14 +307,14 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 		subPanel.add("South", colorbackgroundButton);
 		subPanel.add("South", colorbrushButton);
 		subPanel.add("South", clearButton);
-		subPanel.add("South", leaveButton);
+		subPanel.add("South", exitButton);
 		mainFrame.getContentPane().add("South", subPanel);
 		mainFrame.setBackground(backgroundColor);
 		BrPx.setForeground(Color.blue);
 		cmb.setForeground(Color.blue);
 		BrSize.setForeground(Color.blue);
 		clearButton.setForeground(Color.blue);
-		leaveButton.setForeground(Color.blue);
+		exitButton.setForeground(Color.blue);
 		colorbrushButton.setForeground(Color.blue);
 		colorbackgroundButton.setForeground(Color.BLUE);
 		mainFrame.pack();
@@ -701,8 +701,8 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 				img = null;
 				imgsize = null;
 			}
-			if (img == null || imgsize == null || imgsize.width != d.width
-					|| imgsize.height != d.height) {
+			if (img == null || imgsize == null || imgsize.width == d.width
+					|| imgsize.height == d.height) {
 				img = createImage(d.width, d.height);
 				if (img != null) {
 					gr = img.getGraphics();
